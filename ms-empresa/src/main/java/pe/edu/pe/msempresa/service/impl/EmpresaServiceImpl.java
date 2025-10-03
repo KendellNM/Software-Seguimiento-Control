@@ -17,11 +17,22 @@ public class EmpresaServiceImpl implements EmpresaService {
 
     @Override
     public Empresa create(Empresa empresa) {
+        // Validar RUC duplicado antes de crear
+        if (empresa.getRuc() != null && empresaDao.existsByRuc(empresa.getRuc())) {
+            throw new IllegalArgumentException("El RUC ya existe");
+        }
         return empresaDao.create(empresa);
     }
 
     @Override
     public Empresa update(Empresa empresa) {
+        // Validar RUC duplicado al actualizar (permitir mismo registro)
+        if (empresa.getRuc() != null) {
+            Optional<Empresa> existente = empresaDao.findByRuc(empresa.getRuc());
+            if (existente.isPresent() && !existente.get().getIdEmpresa().equals(empresa.getIdEmpresa())) {
+                throw new IllegalArgumentException("El RUC ya existe");
+            }
+        }
         return empresaDao.update(empresa);
     }
 

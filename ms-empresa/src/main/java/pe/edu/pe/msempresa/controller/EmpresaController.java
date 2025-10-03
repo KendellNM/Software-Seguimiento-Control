@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-
 @RestController
 @CrossOrigin("http://localhost:5173/")
 @RequestMapping("api/empresa")
@@ -24,23 +23,23 @@ public class EmpresaController {
     public ResponseEntity<List<Empresa>> readAll() {
         try {
             List<Empresa> empresas = empresaService.readAll();
-
             if (empresas.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
             return new ResponseEntity<>(empresas, HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
     @PostMapping
-    public ResponseEntity<Empresa> create(@Valid @RequestBody Empresa empresa) {
+    public ResponseEntity<?> create(@Valid @RequestBody Empresa empresa) {
         try {
             Empresa empresaCreated = empresaService.create(empresa);
             return new ResponseEntity<>(empresaCreated, HttpStatus.CREATED);
-        }catch (Exception e) {
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -50,7 +49,7 @@ public class EmpresaController {
         try {
             Empresa empresa = empresaService.read(id).get();
             return new ResponseEntity<>(empresa, HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -60,20 +59,23 @@ public class EmpresaController {
         try {
             empresaService.delete(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable("id") Long id, @Valid @RequestBody Empresa empresa) {
-
-        Optional<Empresa> empresaOptional = empresaService.read(id);
-        if (empresaOptional.isPresent()) {
-            return new ResponseEntity<>(empresaService.update(empresa), HttpStatus.OK);
+        try {
+            Optional<Empresa> empresaOptional = empresaService.read(id);
+            if (empresaOptional.isPresent()) {
+                empresa.setIdEmpresa(id);
+                return new ResponseEntity<>(empresaService.update(empresa), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-
 }

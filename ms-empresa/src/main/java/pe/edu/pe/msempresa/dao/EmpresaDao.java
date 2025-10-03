@@ -10,4 +10,6 @@ public interface EmpresaDao{
     void delete(Long id);
     Optional<Empresa> read(Long id);
     List<Empresa> readAll();
+    boolean existsByRuc(String ruc);
+    Optional<Empresa> findByRuc(String ruc);
 }

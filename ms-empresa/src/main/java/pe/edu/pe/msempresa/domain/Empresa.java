@@ -24,7 +24,7 @@ public class Empresa {
     @Column(name = "razonSocial")
     private String razonSocial;
 
-    @Column(name = "ruc")
+    @Column(name = "ruc", unique = true, nullable = false)
     private String ruc;
 
     @Column(name = "correo")

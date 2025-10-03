@@ -39,4 +39,14 @@ public class EmpresaDaoImpl implements EmpresaDao {
     public List<Empresa> readAll() {
         return empresaRepository.findAll();
     }
+
+    @Override
+    public boolean existsByRuc(String ruc) {
+        return empresaRepository.existsByRuc(ruc);
+    }
+
+    @Override
+    public Optional<Empresa> findByRuc(String ruc) {
+        return empresaRepository.findByRuc(ruc);
+    }
 }
