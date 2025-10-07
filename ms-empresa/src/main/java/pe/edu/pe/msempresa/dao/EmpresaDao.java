@@ -1,0 +1,28 @@
+package pe.edu.pe.msempresa.dao;
+
+import pe.edu.pe.msempresa.domain.Empresa;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface EmpresaDao {
+    Empresa create(Empresa empresa);
+
+    Empresa update(Empresa empresa);
+
+    void delete(Long id);
+
+    Optional<Empresa> read(Long id);
+
+    List<Empresa> readAll();
+
+    boolean existsByRuc(String ruc);
+
+    Optional<Empresa> findByRuc(String ruc);
+
+    List<Empresa> readAllByEstado(String estado);
+
+    List<Empresa> searchByNombre(String nombre);
+
+    List<Empresa> searchByNombreAndEstado(String nombre, String estado);
+}
